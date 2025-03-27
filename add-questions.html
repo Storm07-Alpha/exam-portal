@@ -1,0 +1,178 @@
+<!-- add-questions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Questions</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      max-width: 800px;
+      width: 100%;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      transition: border 0.2s;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #2193b0, #6dd5ed);
+    }
+
+    .question-list {
+      margin-top: 30px;
+    }
+
+    .question-item {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .question-item strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .question-item small {
+      color: #666;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .ri-edit-2-line {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="ri-edit-2-line"></i> Add Questions</h1>
+
+    <select id="examSelector"></select>
+    <textarea id="questionText" rows="3" placeholder="Enter question text" required></textarea>
+    <input type="text" id="optionA" placeholder="Option A" required />
+    <input type="text" id="optionB" placeholder="Option B" required />
+    <input type="text" id="optionC" placeholder="Option C" required />
+    <input type="text" id="optionD" placeholder="Option D" required />
+    <select id="correctAnswer">
+      <option value="">Select Correct Answer</option>
+      <option value="A">Option A</option>
+      <option value="B">Option B</option>
+      <option value="C">Option C</option>
+      <option value="D">Option D</option>
+    </select>
+    <button onclick="addQuestion()">Add Question</button>
+
+    <div class="question-list" id="questionList"></div>
+  </div>
+
+  <script>
+    const examSelector = document.getElementById("examSelector");
+    const questionList = document.getElementById("questionList");
+
+    function loadExams() {
+      const exams = JSON.parse(localStorage.getItem("exams")) || [];
+      examSelector.innerHTML = '<option value="">Select Exam</option>' +
+        exams.map((exam, i) => `<option value="${i}">${exam.title}</option>`).join('');
+    }
+
+    function loadQuestions(index) {
+      const questions = JSON.parse(localStorage.getItem(`questions_${index}`)) || [];
+      questionList.innerHTML = questions.map((q, i) => `
+        <div class="question-item">
+          <strong>Q${i + 1}:</strong> ${q.text}
+          <small>Options: A) ${q.A}, B) ${q.B}, C) ${q.C}, D) ${q.D}</small>
+          <small>Answer: <strong>${q.correct}</strong></small>
+        </div>
+      `).join('');
+    }
+
+    function addQuestion() {
+      const index = examSelector.value;
+      if (index === '') return alert('Please select an exam');
+
+      const q = {
+        text: document.getElementById("questionText").value,
+        A: document.getElementById("optionA").value,
+        B: document.getElementById("optionB").value,
+        C: document.getElementById("optionC").value,
+        D: document.getElementById("optionD").value,
+        correct: document.getElementById("correctAnswer").value
+      };
+
+      if (!q.text || !q.A || !q.B || !q.C || !q.D || !q.correct) return alert("Fill all fields!");
+
+      const key = `questions_${index}`;
+      const questions = JSON.parse(localStorage.getItem(key)) || [];
+      questions.push(q);
+      localStorage.setItem(key, JSON.stringify(questions));
+      loadQuestions(index);
+
+      document.getElementById("questionText").value = "";
+      document.getElementById("optionA").value = "";
+      document.getElementById("optionB").value = "";
+      document.getElementById("optionC").value = "";
+      document.getElementById("optionD").value = "";
+      document.getElementById("correctAnswer").value = "";
+    }
+
+    examSelector.addEventListener('change', (e) => {
+      loadQuestions(e.target.value);
+    });
+
+    loadExams();
+  </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!-- create-exam.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Exam</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      transition: border 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #2193b0, #6dd5ed);
+    }
+
+    .exam-list {
+      margin-top: 30px;
+    }
+
+    .exam-item {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .exam-item h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #34495e;
+    }
+
+    .exam-item small {
+      color: #666;
+    }
+
+    .edit-btn, .delete-btn {
+      position: absolute;
+      top: 18px;
+      font-size: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      right: 45px;
+      color: #2980b9;
+    }
+
+    .delete-btn {
+      right: 15px;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="ri-file-add-line"></i> Create Exam</h1>
+    <form id="examForm">
+      <input type="text" id="title" placeholder="Exam Title" required />
+      <input type="date" id="date" required />
+      <input type="time" id="time" required />
+      <input type="number" id="duration" placeholder="Duration (minutes)" required />
+      <select id="type" required>
+        <option value="">Select Type</option>
+        <option value="MCQ">MCQ</option>
+        <option value="Theory">Theory</option>
+        <option value="Mixed">Mixed</option>
+      </select>
+      <button type="submit">Save Exam</button>
+    </form>
+
+    <div class="exam-list" id="examList">
+      <h2>Saved Exams</h2>
+      <!-- Exam cards will appear here -->
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("examForm");
+    const examList = document.getElementById("examList");
+    let editingIndex = null;
+
+    const loadExams = () => {
+      const exams = JSON.parse(localStorage.getItem("exams")) || [];
+      examList.innerHTML = '<h2>Saved Exams</h2>';
+      exams.forEach((exam, index) => {
+        examList.innerHTML += `
+          <div class="exam-item">
+            <h3>${exam.title}</h3>
+            <small>${exam.date} @ ${exam.time} (${exam.duration} mins, ${exam.type})</small>
+            <button class="edit-btn" onclick="editExam(${index})"><i class="ri-pencil-line"></i></button>
+            <button class="delete-btn" onclick="deleteExam(${index})"><i class="ri-delete-bin-line"></i></button>
+          </div>
+        `;
+      });
+    };
+
+    const saveExams = (exams) => {
+      localStorage.setItem("exams", JSON.stringify(exams));
+      loadExams();
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newExam = {
+        title: document.getElementById("title").value,
+        date: document.getElementById("date").value,
+        time: document.getElementById("time").value,
+        duration: document.getElementById("duration").value,
+        type: document.getElementById("type").value
+      };
+
+      let exams = JSON.parse(localStorage.getItem("exams")) || [];
+      if (editingIndex !== null) {
+        exams[editingIndex] = newExam;
+        editingIndex = null;
+      } else {
+        exams.push(newExam);
+      }
+      saveExams(exams);
+      form.reset();
+    });
+
+    window.editExam = (index) => {
+      const exams = JSON.parse(localStorage.getItem("exams")) || [];
+      const exam = exams[index];
+      document.getElementById("title").value = exam.title;
+      document.getElementById("date").value = exam.date;
+      document.getElementById("time").value = exam.time;
+      document.getElementById("duration").value = exam.duration;
+      document.getElementById("type").value = exam.type;
+      editingIndex = index;
+    };
+
+    window.deleteExam = (index) => {
+      const exams = JSON.parse(localStorage.getItem("exams")) || [];
+      exams.splice(index, 1);
+      saveExams(exams);
+    };
+
+    loadExams();
+  </script>
+</body>
+</html>

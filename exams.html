@@ -1,0 +1,93 @@
+<!-- exams.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Available Exams</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f0f2f5, #dfe9f3);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .exam-card {
+      background: #f8f9fb;
+      border-left: 5px solid #3498db;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: transform 0.2s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .exam-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .exam-card h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      color: #34495e;
+    }
+
+    .exam-card p {
+      margin: 5px 0;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="ri-eye-line"></i> Available Exams</h1>
+    <div id="examContainer"></div>
+  </div>
+
+  <script>
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const examContainer = document.getElementById("examContainer");
+
+    if (exams.length === 0) {
+      examContainer.innerHTML = `<p style="text-align:center; color:#888;">No exams available at the moment.</p>`;
+    } else {
+      exams.forEach((exam) => {
+        const card = document.createElement("div");
+        card.className = "exam-card";
+        card.innerHTML = `
+          <h3>${exam.title}</h3>
+          <p><strong>Date:</strong> ${exam.date}</p>
+          <p><strong>Time:</strong> ${exam.time}</p>
+          <p><strong>Duration:</strong> ${exam.duration} mins</p>
+          <p><strong>Type:</strong> ${exam.type}</p>
+        `;
+        examContainer.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>

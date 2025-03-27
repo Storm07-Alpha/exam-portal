@@ -1,0 +1,94 @@
+<!-- monitor-exams.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor Exams</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f3f9ff, #ddefff);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .exam-row {
+      background: #f6f9fc;
+      border-left: 4px solid #2ecc71;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    }
+
+    .exam-row h3 {
+      margin: 0 0 8px;
+      color: #34495e;
+    }
+
+    .exam-row p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .exam-row small {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="ri-bar-chart-line"></i> Monitor Exams</h1>
+    <div id="examMonitor"></div>
+  </div>
+
+  <script>
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const examMonitor = document.getElementById("examMonitor");
+
+    if (exams.length === 0) {
+      examMonitor.innerHTML = `<p style="text-align:center; color:#888;">No exams to monitor yet.</p>`;
+    } else {
+      exams.forEach((exam, index) => {
+        const students = Math.floor(Math.random() * 50) + 10; // mock data
+        const row = document.createElement("div");
+        row.className = "exam-row";
+        row.innerHTML = `
+          <h3>${exam.title}</h3>
+          <p><strong>Date:</strong> ${exam.date}</p>
+          <p><strong>Time:</strong> ${exam.time}</p>
+          <p><strong>Type:</strong> ${exam.type}</p>
+          <p><strong>Duration:</strong> ${exam.duration} minutes</p>
+          <p><strong>Students Registered:</strong> ${students}</p>
+          <small>Exam ID: EX-${index + 1}</small>
+        `;
+        examMonitor.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
